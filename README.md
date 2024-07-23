@@ -101,6 +101,31 @@ const AddNewBlog = Joi.object({
 - B4: npx shadcn-ui@latest add input
 - B5: npx shadcn-ui@latest add label
 
+### Đóng mở Dialog ở blog-overview
+
+- B1: Copy đoạn code có sẵn
+- B2: Xóa một đoạn code có sẵn bên dưới
+
+```jsx
+<DialogTrigger asChild>
+    <Button variant="outline">Edit Profile</Button>
+</DialogTrigger>
+```
+
+- B3: Tạo state để quản lý việc đóng mở dialog
+
+```jsx
+const [openBlogDialog, setOpenBlogDialog] = useState(false)
+
+<div>
+    <Button onClick={() => setOpenBlogDialog(true)}>Add New Blog</Button>
+</div>
+
+<Dialog open={openBlogDialog} onOpenChange={setOpenBlogDialog}>
+    ...
+</Dialog>
+```
+
 
 
 
