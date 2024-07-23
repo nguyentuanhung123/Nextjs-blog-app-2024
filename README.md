@@ -271,7 +271,146 @@ async function handleDeleteBlogByID(getCurrentID) {
 <Button onClick={() => handleDeleteBlogByID(blogItem._id)}>Delete</Button>
 ```
 
+```jsx
+const updateBlogByBlogID = await Blog.findOneAndUpdate(
+    {
+        _id: getCurrentBlogId
+    }, 
+    { title, description },
+    { new: true }
+);
+```
 
+- { new: true }: Tùy chọn này chỉ định rằng phương thức findOneAndUpdate sẽ trả về tài liệu đã được cập nhật thay vì tài liệu gốc trước khi cập nhật.
+
+### Edit Blog: Mở Dialog
+
+```jsx
+// edit blog
+const [currentEditedBlogID, setCurrentEditedBlogID] = useState(null);
+
+function handleEdit(getCurrentBlog) {
+    setCurrentEditedBlogID(getCurrentBlog?._id)
+    setBlogFormData({
+        title: getCurrentBlog?.title,
+        description: getCurrentBlog?.description
+    })
+    setOpenBlogDialog(true);
+}
+```
+
+### Fix bug: Khi ta bấm Edit thì nó vẫn để h1: Add New Blog: 
+
+- Ban đầu :
+
+```jsx
+<AddNewBlog 
+    openBlogDialog={openBlogDialog} 
+    setOpenBlogDialog={setOpenBlogDialog}
+    loading={loading}
+    setLoading={setLoading}
+    blogFormData={blogFormData}
+    setBlogFormData={setBlogFormData}
+    handleSaveBlogData={handleSaveBlogData}
+/>
+```
+
+- Sau khi thêm:
+
+```jsx
+<AddNewBlog 
+    openBlogDialog={openBlogDialog} 
+    setOpenBlogDialog={setOpenBlogDialog}
+    loading={loading}
+    setLoading={setLoading}
+    blogFormData={blogFormData}
+    setBlogFormData={setBlogFormData}
+    handleSaveBlogData={handleSaveBlogData}
+    currentEditedBlogID={currentEditedBlogID}
+    setCurrentEditedBlogID={setCurrentEditedBlogID}
+/>
+```
+
+```jsx
+<DialogTitle>{currentEditedBlogID ? 'Edit Blog' : 'Add New Blog'}</DialogTitle>
+```
+
+- Do sau khi đóng Dialog currentEditedBlogID vẫn còn giá trị nên ta phải: 
+
+```jsx
+<Dialog open={openBlogDialog} onOpenChange={() => {
+    setOpenBlogDialog(false)
+    setBlogFormData({
+        title: '',
+        description: ''
+    })
+    setCurrentEditedBlogID(null)
+}
+}>
+...
+</Dialog>
+```
+
+## Chỉnh sửa lại hàm handleSaveBlogData sau khi bấm button save changes (Do có thêm chức năng sửa nên ta sẽ dựa vào state currentEditedBlogID)
+
+- Ban đầu
+
+```jsx
+async function handleSaveBlogData() {
+    try {
+        setLoading(true);
+        const apiResponse = await fetch('/api/add-blog', {
+            method: 'POST',
+            body: JSON.stringify(blogFormData)
+        });
+        const result = await apiResponse.json();
+        if(result?.success) {
+            setBlogFormData(initialBlogFormData)
+            setOpenBlogDialog(false);
+            setLoading(false);
+            router.refresh();
+        }
+        console.log(result);
+    } catch(error) {
+        console.log(error);
+        setLoading(false);
+        setBlogFormData(initialBlogFormData);
+    }
+}
+```
+
+- Sau khi sửa
+
+```jsx
+async function handleSaveBlogData() {
+    try {
+        setLoading(true);
+        const apiResponse = 
+            currentEditedBlogID !== null 
+                ? await fetch(`/api/update-blog?id=${currentEditedBlogID}`, {
+                    method: "PUT",
+                    body: JSON.stringify(blogFormData)
+                })
+                : await fetch('/api/add-blog', {
+                    method: 'POST',
+                    body: JSON.stringify(blogFormData)
+                });
+        const result = await apiResponse.json();
+        if(result?.success) {
+            setBlogFormData(initialBlogFormData)
+            setOpenBlogDialog(false);
+            setLoading(false);
+            setCurrentEditedBlogID(null); // thêm cái này nữa
+            router.refresh();
+        }
+            console.log(result);
+    } catch(error) {
+        console.log(error);
+        setLoading(false);
+        setBlogFormData(initialBlogFormData);
+    }
+}
+```
 
 
 

@@ -15,7 +15,15 @@ import { Label } from "@/components/ui/label";
  * Component này được sử dụng trong BlogOverview (trong thư mục cùng cấp blog-overview)
  */
 
-const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, blogFormData, setBlogFormData, handleSaveBlogData}) => {
+const AddNewBlog = ({
+    openBlogDialog, 
+    setOpenBlogDialog, 
+    loading, blogFormData, 
+    setBlogFormData, 
+    handleSaveBlogData, 
+    currentEditedBlogID,
+    setCurrentEditedBlogID
+}) => {
 
     return (
         <Fragment>
@@ -28,11 +36,14 @@ const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, blogFormData, s
                     title: '',
                     description: ''
                 })
+                setCurrentEditedBlogID(null)
             }
             }>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Add New Blog</DialogTitle>
+                        <DialogTitle>
+                            {currentEditedBlogID ? 'Edit Blog' : 'Add New Blog'}{" "}
+                        </DialogTitle>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -59,6 +70,7 @@ const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, blogFormData, s
                             </Label>
                             <Input
                                 name="description"
+                                placeholder="Enter blog description"
                                 value={blogFormData.description}
                                 id="description"
                                 className="col-span-3"
