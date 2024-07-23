@@ -15,14 +15,21 @@ import { Label } from "@/components/ui/label";
  * Component này được sử dụng trong BlogOverview (trong thư mục cùng cấp blog-overview)
  */
 
-const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, setLoading, blogFormData, setBlogFormData, handleSaveBlogData}) => {
+const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, blogFormData, setBlogFormData, handleSaveBlogData}) => {
 
     return (
         <Fragment>
             <div>
                 <Button onClick={() => setOpenBlogDialog(true)}>Add New Blog</Button>
             </div>
-            <Dialog open={openBlogDialog} onOpenChange={setOpenBlogDialog}>
+            <Dialog open={openBlogDialog} onOpenChange={() => {
+                setOpenBlogDialog(false)
+                setBlogFormData({
+                    title: '',
+                    description: ''
+                })
+            }
+            }>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Add New Blog</DialogTitle>
@@ -65,7 +72,11 @@ const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, setLoading, blo
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={handleSaveBlogData} type="button">Save changes</Button>
+                        <Button onClick={handleSaveBlogData} type="button">
+                            {
+                                loading ? 'Saving Changes' : 'Save Changes'
+                            }
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

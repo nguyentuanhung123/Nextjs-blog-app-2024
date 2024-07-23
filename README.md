@@ -126,6 +126,20 @@ const [openBlogDialog, setOpenBlogDialog] = useState(false)
 </Dialog>
 ```
 
+### Fix bug : Khi dialog được mở, dữ liệu đã viết vẫn được lưu
+
+- Ban đầu:
+
+```jsx
+<Dialog open={openBlogDialog} onOpenChange={setOpenBlogDialog}>...</Dialog>
+```
+
+- Sửa lại:
+
+```jsx
+
+```
+
 
 
 

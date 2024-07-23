@@ -13,15 +13,21 @@ const BlogOverview = () => {
     const [loading, setLoading] = useState(false);
     const [blogFormData, setBlogFormData] = useState(initialBlogFormData);
 
-    console.log("BlogFormData: ", blogFormData);
+    // console.log("BlogFormData: ", blogFormData);
 
     async function handleSaveBlogData() {
         try {
+            setLoading(true);
             const apiResponse = await fetch('/api/add-blog', {
                 method: 'POST',
                 body: JSON.stringify(blogFormData)
             });
             const result = await apiResponse.json();
+            if(result?.success) {
+                setBlogFormData(initialBlogFormData)
+                setOpenBlogDialog(false);
+                setLoading(false);
+            }
             console.log(result);
         } catch(error) {
             console.log(error);
