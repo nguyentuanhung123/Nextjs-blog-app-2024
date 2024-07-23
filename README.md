@@ -34,3 +34,74 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+### Kết nỗi database
+
+- B1: npm i mongoose joi
+
+- B2: Tạo 1 thư mục trong thư mục src có tên là database
+
+```jsx
+import mongoose from "mongoose";
+
+const connectToDB = async () => {
+    const connectionUrl = 'mongodb+srv://nguyentuanhung4529871036:nguyentuanhung123@blog.yir2bsw.mongodb.net/?retryWrites=true&w=majority&appName=blog'
+
+    mongoose
+        .connect(connectionUrl)
+        .then(() => console.log('blog database connected is successfully'))
+        .catct((error) => console.log(error))
+}
+
+export default connectToDB;
+```
+
+- B3: Tạo models
+
+```jsx
+import mongoose from "mongoose";
+
+// databse
+// model
+// api routes -> add, fetcj / get, update, delete
+
+const BlogSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+});
+
+const Blog = mongoose.models.Blog || mongoose.model('Blog', BlogSchema);
+
+export default Blog;
+```
+
+- B4: Tạo 1 thư mục là api bên trong thư mục app, bên trong có các thư mục như add-blog, ... và bên trong mỗi thư mcuj có file là route.js
+
+## Joi
+
+```jsx
+import Joi from "joi";
+
+const AddNewBlog = Joi.object({
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+})
+```
+
+- import Joi from "joi" : Đoạn mã này import thư viện Joi để sử dụng trong việc xác thực dữ liệu.
+- Joi.object({...}): Hàm này tạo ra một schema đối tượng mới. Schema này mô tả cấu trúc và các quy tắc xác thực cho đối tượng.
+- title: Joi.string().required(): Định nghĩa rằng trường title phải là một chuỗi và là bắt buộc (phải có giá trị).
+- description: Joi.string().required(): Định nghĩa rằng trường description phải là một chuỗi và là bắt buộc (phải có giá trị).
+
+### Shadcn/ui : https://ui.shadcn.com/docs/installation/next
+
+- B1: npx shadcn-ui@latest init
+- B2: npx shadcn-ui@latest add button
+- B3: npx shadcn-ui@latest add dialog
+- B4: npx shadcn-ui@latest add input
+- B5: npx shadcn-ui@latest add label
+
+
+
+
+
