@@ -137,8 +137,142 @@ const [openBlogDialog, setOpenBlogDialog] = useState(false)
 - Sửa lại:
 
 ```jsx
-
+<Dialog open={openBlogDialog} onOpenChange={() => {
+    setOpenBlogDialog(false)
+    setBlogFormData({
+        title: '',
+        description: ''
+    })
+}
+}></Dialog>
 ```
+
+### Lưu ý
+
+- Khi kết nối api thì có sự khác biệt nhỏ
+
+- Ở folder blogs: có đường dẫn là : http://localhost:3000/blogs, thì ta phải
+
+```jsx
+const fetchListOfBlogs = async () => {
+    try {
+        const apiResponse = await fetch('http://localhost:3000/api/get-blogs', {
+            method: 'GET',
+            cache: 'no-store'
+        })
+        const result = await apiResponse.json()
+        return result?.data
+    }
+    catch (error) {
+        throw new Error(error)
+    }
+}
+```
+
+- Nhưng ở BlogOverview
+
+```jsx
+async function handleSaveBlogData() {
+    try {
+        setLoading(true);
+        const apiResponse = await fetch('/api/add-blog', {
+            method: 'POST',
+            body: JSON.stringify(blogFormData)
+        });
+        const result = await apiResponse.json();
+        if(result?.success) {
+            setBlogFormData(initialBlogFormData)
+            setOpenBlogDialog(false);
+            setLoading(false);
+        }
+        console.log(result);
+    } catch(error) {
+        console.log(error);
+        setLoading(false);
+        setBlogFormData(initialBlogFormData);
+    }
+}
+```
+
+### Fix Bug: Mỗi khi thêm blog mới thì nó không hiện blog mới lên màn hình. Lý do: Màn hình không được refresh. Cách sửa : Sử dụng useRouter()
+
+```jsx
+import { useRouter } from 'next/navigation';
+
+const router = useRouter();
+
+useEffect(() => {
+    router.refresh();
+})
+
+async function handleSaveBlogData() {
+    try {
+        setLoading(true);
+        const apiResponse = await fetch('/api/add-blog', {
+            method: 'POST',
+            body: JSON.stringify(blogFormData)
+        });
+        const result = await apiResponse.json();
+        if(result?.success) {
+            setBlogFormData(initialBlogFormData)
+            setOpenBlogDialog(false);
+            setLoading(false);
+            router.refresh();
+        }
+        console.log(result);
+    } catch(error) {
+        console.log(error);
+        setLoading(false);
+        setBlogFormData(initialBlogFormData);
+    }
+}
+```
+
+### Giải thích về url trong delete blog
+
+```jsx
+const { searchParams } = new URL(req.url);
+```
+
+- Dòng mã này được sử dụng để trích xuất các tham số truy vấn từ URL trong yêu cầu HTTP. Trong trường hợp này, req.url là URL của yêu cầu.
+- new URL(req.url): Tạo một đối tượng URL từ URL của yêu cầu.
+- searchParams: Trích xuất đối tượng URLSearchParams từ URL, đối tượng này chứa tất cả các tham số truy vấn từ URL.
+
+- Ví Dụ Cụ Thể
+- Giả sử bạn có một URL như sau: https://example.com/api/items?category=books&sort=asc
+
+- Khi yêu cầu HTTP này được gửi đến server, bạn có thể trích xuất các tham số truy vấn bằng cách sử dụng URL và searchParams như sau:
+
+```jsx
+const { searchParams } = new URL('https://example.com/api/items?category=books&sort=asc');
+
+console.log(searchParams.get('category')); // Output: books
+console.log(searchParams.get('sort')); // Output: asc
+```
+
+### Delete blog
+
+```jsx
+async function handleDeleteBlogByID(getCurrentID) {
+    try {
+        const apiResponse = await fetch(`/api/delete-blog?id=${getCurrentID}`, {
+            method: "DELETE"
+        })
+        const result = await apiResponse.json();
+
+        if(result?.success) {
+            router.refresh();
+        }
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+<Button onClick={() => handleDeleteBlogByID(blogItem._id)}>Delete</Button>
+```
+
+
+
 
 
 
