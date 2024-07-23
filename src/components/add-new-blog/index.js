@@ -11,7 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const AddNewBlog = ({openBlogDialog, setOpenBlogDialog}) => {
+/**
+ * Component này được sử dụng trong BlogOverview (trong thư mục cùng cấp blog-overview)
+ */
+
+const AddNewBlog = ({openBlogDialog, setOpenBlogDialog, loading, setLoading, blogFormData, setBlogFormData, handleSaveBlogData}) => {
 
     return (
         <Fragment>
@@ -29,8 +33,17 @@ const AddNewBlog = ({openBlogDialog, setOpenBlogDialog}) => {
                                 Title
                             </Label>
                             <Input
+                                name="title"
+                                placeholder="Enter blog title"
+                                value={blogFormData.title}
                                 id="title"
                                 className="col-span-3"
+                                onChange={(event) => 
+                                    setBlogFormData({
+                                        ...blogFormData, 
+                                        title: event.target.value
+                                    })
+                                }
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -38,13 +51,21 @@ const AddNewBlog = ({openBlogDialog, setOpenBlogDialog}) => {
                                 Description
                             </Label>
                             <Input
+                                name="description"
+                                value={blogFormData.description}
                                 id="description"
                                 className="col-span-3"
+                                onChange={(event) => 
+                                    setBlogFormData({
+                                        ...blogFormData, 
+                                        description: event.target.value
+                                    })
+                                }
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="button">Save changes</Button>
+                        <Button onClick={handleSaveBlogData} type="button">Save changes</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
